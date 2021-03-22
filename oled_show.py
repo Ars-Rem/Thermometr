@@ -7,7 +7,7 @@ import os
 import socket
 
 
-print('CPU:', machine.freq()) 
+print('CPU:', freq()) 
 
 
 # ESP32
