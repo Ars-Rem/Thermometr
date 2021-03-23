@@ -81,8 +81,7 @@ while True:
     blank_lcd()
     break
   else:  
-  # bytes
-  
+    # bytes
     t = bytes(t, 'utf8')
     h = bytes(h, 'utf8')
     # output to serv
