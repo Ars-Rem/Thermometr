@@ -8,26 +8,15 @@ webrepl.start()
 gc.collect()
 
 
-import network
 from network import WLAN
-
-
+import network
 
 wlan = WLAN()
-
-
 nets = wlan.scan()
 print(nets)
-for net in nets:
-    print(net)
-    if net == 'wifi':
-        print('Network found!')
-        wlan.connect(net.ssid, auth=(net.sec, ''), timeout=5000)
-        while not wlan.isconnected():
-            machine.idle() # save power while waiting
-        print('WLAN connection succeeded!')
-        break
-    else:
-        pass
+# enable station interface and connect to WiFi access point
+nic = network.WLAN(network.STA_IF)
+nic.active(True)
+nic.connect('wifi', '22224444')
 
 

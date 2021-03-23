@@ -5,7 +5,7 @@ import dht
 import machine
 import os
 import socket
-
+import time
 
 print('CPU:', freq()) 
 
@@ -15,6 +15,8 @@ print('CPU:', freq())
 
 # ESP8266
 i2c = I2C(-1, scl=Pin(5), sda=Pin(4))
+pin = Pin(2, Pin.OUT)
+
 
 oled_width = 128
 oled_height = 64
@@ -70,6 +72,14 @@ while True:
     sock.connect(('192.168.0.165', 8888))
   except OSError:
     print('not server connection')
+    blank_lcd()
+    poweron()
+    oled.text('not server',0,0)
+    show()
+    break
+  except KeyboardInterrupt:
+    blank_lcd()
+    break
   else:  
   # bytes
   
@@ -89,8 +99,6 @@ while True:
   # polling time
   time.sleep(120)
  
-  
-
 
 #  commands
 
@@ -100,5 +108,6 @@ while True:
 #show()
 #blank_lcd()
 #poweron()
+
 
 
