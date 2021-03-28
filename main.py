@@ -1,22 +1,21 @@
 from machine import Pin, I2C, freq
 import ssd1306
-from time import sleep
+#from time import sleep
+import time
 import dht
 import machine
 import os
 import socket
-import time
+from class_temp import TempHum
 
 print('CPU:', freq()) 
 
 
 # ESP32
-i2c = I2C(-1, scl=Pin(22), sda=Pin(21))
+#i2c = I2C(-1, scl=Pin(22), sda=Pin(21))
 
 # ESP8266
-#i2c = I2C(-1, scl=Pin(5), sda=Pin(4))
-pin = Pin(2, Pin.OUT)
-
+i2c = I2C(-1, scl=Pin(5), sda=Pin(4))
 
 oled_width = 128
 oled_height = 64
@@ -43,7 +42,7 @@ def poweron():
 def blank_lcd():
     off = oled.poweroff()
 
-
+pin = Pin(2, Pin.OUT)
 def blink(sec):
     pin.off()
     time.sleep(sec)
@@ -53,19 +52,20 @@ def blink(sec):
 
 #x = 5
 #while x != 0:
-while True:    
-  d = dht.DHT22(machine.Pin(12))
-  d.measure()
+while True:
+        
+#  d = dht.DHT22(machine.Pin(12))
+#  d.measure()
   #print('temp:', d.temperature())
   #print('hum:', d.humidity())    
   #x -= 1
   blink(1)
   
-  t = str(d.temperature())
-  h = str(d.humidity())
+  t = TempHum().temp()
+  h = TempHum().hum()
   # output to lcd
-  oled.text('TEMP:{}C'.format(t), 30, 0)
-  oled.text('HUM:{}H'.format(h), 30, 20)
+  oled.text('TEMP:{}C'.format(TempHum().temp()), 30, 0)
+  oled.text('HUM:{}H'.format(TempHum().hum()), 30, 20)
   # socket
   try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -81,12 +81,13 @@ while True:
     blank_lcd()
     break
   else:  
-    # bytes
+  # bytes
+  
     t = bytes(t, 'utf8')
     h = bytes(h, 'utf8')
     # output to serv
     sock.send('Temperature: {} C '.format(t.decode()))
-    sock.send('Humadity: {} %'.format(h.decode()))
+    sock.send('Humidity: {} %'.format(h.decode()))
 
     res = sock.recv(1024)
     
@@ -94,10 +95,12 @@ while True:
     sock.close()
 
 
-  show()
-  # polling time
-  time.sleep(120)
- 
+    show()
+      # polling time
+    time.sleep(60)
+     
+    
+
 
 #  commands
 
@@ -107,7 +110,4 @@ while True:
 #show()
 #blank_lcd()
 #poweron()
-
-
-
 
