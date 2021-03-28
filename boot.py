@@ -4,9 +4,10 @@ import uos, machine
 #uos.dupterm(None, 1) # disable REPL on UART(0)
 import gc
 import webrepl
-webrepl.start()
+#webrepl.start()
 gc.collect()
 
+import main
 
 from network import WLAN
 import network
@@ -18,5 +19,4 @@ print(nets)
 nic = network.WLAN(network.STA_IF)
 nic.active(True)
 nic.connect('wifi', '22224444')
-
 
