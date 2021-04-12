@@ -20,3 +20,4 @@ nic = network.WLAN(network.STA_IF)
 nic.active(True)
 nic.connect('wifi', '22224444')
 
+main()
