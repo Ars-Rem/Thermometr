@@ -6,6 +6,8 @@ import dht
 import machine
 import os
 import socket
+
+
 #from class_temp import TempHum
 
 print('CPU:', freq()) 
@@ -78,14 +80,19 @@ while True:
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('192.168.0.165', 8888))
+        oled.text('tcp', 0, 1)
+        oled.text('ok', 0, 10)
+        
     except OSError:
         print('not server connection')
         oled.fill(0)
         iter = int(iter) + 1
-        oled.text('NOT SERVER',30,5)
-        oled.text('CONN: {}'.format(iter), 30, 25)
+        oled.text('TEMP:{}C'.format(str(t)), 30, 0)
+        oled.text('HUM:{}%'.format(str(h)), 30, 20)
+        oled.text('no', 0, 1)
+        oled.text('con', 0, 10)
+        oled.text('{}'.format(iter), 0, 20)
         show()
-      
     except KeyboardInterrupt:
         blank_lcd()
         break
@@ -105,10 +112,10 @@ while True:
 
     
         show()
-        oled.fill(1)
+#        oled.fill(1)
 #            
 #      # polling time
-#        time.sleep(2)
+        time.sleep(2)
 #        blank_lcd()
 #        time.sleep(1)
 #        poweron()
