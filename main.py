@@ -18,12 +18,14 @@ print('CPU:', freq())
 
 # ESP8266
 i2c = I2C(-1, scl=Pin(5), sda=Pin(4))
-
+i2c2 = I2C(-1, scl=Pin(0), sda=Pin(2))
 oled_width = 128
 #oled_height = 64
 oled_height = 32
 oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
 oled.fill(0)
+
+
 
 def sleep_time(func):
     def wrapper():
@@ -69,29 +71,30 @@ while True:
     oled.fill(0)
     t = d.temperature()
     h = d.humidity()
-    
+    fan = None
   # output to lcd
-    oled.text('TEMP:{}C'.format(str(t)), 30, 0)
-    oled.text('HUM:{}%'.format(str(h)), 30, 20)
-    
+    oled.text('TEMP:{}C'.format(str(t)), 0, 0)
+    oled.text('HUM:{}%'.format(str(h)), 0, 10)
+    oled.text('FAN:{}'.format(fan), 0, 20)
     
     
   # socket
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('192.168.0.165', 8888))
-        oled.text('tcp', 0, 1)
-        oled.text('ok', 0, 10)
+        oled.text('tcp', 90, 0)
+        oled.text('ok', 90, 8)
         
     except OSError:
         print('not server connection')
         oled.fill(0)
         iter = int(iter) + 1
-        oled.text('TEMP:{}C'.format(str(t)), 30, 0)
-        oled.text('HUM:{}%'.format(str(h)), 30, 20)
-        oled.text('no', 0, 1)
-        oled.text('con', 0, 10)
-        oled.text('{}'.format(iter), 0, 20)
+        oled.text('TEMP:{}C'.format(str(t)), 0, 0)
+        oled.text('HUM:{}%'.format(str(h)), 0, 10)
+        oled.text('FAN:{}'.format(fan), 0, 20)
+        oled.text('no', 90, 0)
+        oled.text('conn..', 90, 8)
+        oled.text('#{}'.format(iter), 90, 20)
         show()
     except KeyboardInterrupt:
         blank_lcd()
@@ -115,7 +118,7 @@ while True:
 #        oled.fill(1)
 #            
 #      # polling time
-        time.sleep(2)
+        time.sleep(30)
 #        blank_lcd()
 #        time.sleep(1)
 #        poweron()
