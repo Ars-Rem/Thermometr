@@ -21,7 +21,6 @@ import main
 #nic = network.WLAN(network.STA_IF)
 #nic.active(True)
 #nic.connect('wifi', '22224444')
-
 def do_connect():
     import network
     wlan = network.WLAN(network.STA_IF)
@@ -30,9 +29,7 @@ def do_connect():
         print('connecting to network...')
         wlan.connect('wifi', '22224444')
         while not wlan.isconnected():
-            pass
+            main()
     print('network config:', wlan.ifconfig())
 
 do_connect()
-
-main()
