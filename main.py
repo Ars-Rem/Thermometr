@@ -6,7 +6,9 @@ import dht
 import machine
 import os
 import socket
-from class_temp import TempHum
+
+
+#from class_temp import TempHum
 
 print('CPU:', freq()) 
 
@@ -18,9 +20,10 @@ print('CPU:', freq())
 i2c = I2C(-1, scl=Pin(5), sda=Pin(4))
 
 oled_width = 128
-oled_height = 64
+#oled_height = 64
+oled_height = 32
 oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
-
+oled.fill(0)
 
 def sleep_time(func):
     def wrapper():
@@ -47,59 +50,77 @@ def blink(sec):
     pin.off()
     time.sleep(sec)
     pin.on()
-   
+
+
+global iter
+iter = 0
 
 
 #x = 5
 #while x != 0:
 while True:
         
-#  d = dht.DHT22(machine.Pin(12))
-#  d.measure()
-  #print('temp:', d.temperature())
-  #print('hum:', d.humidity())    
+    d = dht.DHT22(machine.Pin(12))
+    d.measure()
+    #print('temp:', d.temperature())
+    #print('hum:', d.humidity())    
   #x -= 1
-  blink(1)
-  
-  t = TempHum().temp()
-  h = TempHum().hum()
+    blink(1)
+    oled.fill(0)
+    t = d.temperature()
+    h = d.humidity()
+    
   # output to lcd
-  oled.text('TEMP:{}C'.format(TempHum().temp()), 30, 0)
-  oled.text('HUM:{}H'.format(TempHum().hum()), 30, 20)
+    oled.text('TEMP:{}C'.format(str(t)), 30, 0)
+    oled.text('HUM:{}%'.format(str(h)), 30, 20)
+    
+    
+    
   # socket
-  try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('192.168.0.165', 8888))
-  except OSError:
-    print('not server connection')
-    blank_lcd()
-    poweron()
-    oled.text('not server',0,0)
-    show()
-    break
-  except KeyboardInterrupt:
-    blank_lcd()
-    break
-  else:  
-  # bytes
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(('192.168.0.165', 8888))
+        oled.text('tcp', 0, 1)
+        oled.text('ok', 0, 10)
+        
+    except OSError:
+        print('not server connection')
+        oled.fill(0)
+        iter = int(iter) + 1
+        oled.text('TEMP:{}C'.format(str(t)), 30, 0)
+        oled.text('HUM:{}%'.format(str(h)), 30, 20)
+        oled.text('no', 0, 1)
+        oled.text('con', 0, 10)
+        oled.text('{}'.format(iter), 0, 20)
+        show()
+    except KeyboardInterrupt:
+        blank_lcd()
+        break
+    else:  
+    # bytes
   
-    t = bytes(t, 'utf8')
-    h = bytes(h, 'utf8')
-    # output to serv
-    sock.send('Temperature: {} C '.format(t.decode()))
-    sock.send('Humidity: {} %'.format(h.decode()))
+#        t = bytes(t, 'utf8')
+#        h = bytes(h, 'utf8')
+      # output to serv
+        sock.send('Temperature: {} C '.format(t))
+        sock.send('Humidity: {} %'.format(h))
 
-    res = sock.recv(1024)
+        res = sock.recv(1024)
     
-    print('answer from server:', res.decode())
-    sock.close()
+        print('answer from server:', res.decode())
+        sock.close()
 
-
-    show()
-      # polling time
-    time.sleep(60)
-     
     
+        show()
+#        oled.fill(1)
+#            
+#      # polling time
+        time.sleep(2)
+#        blank_lcd()
+#        time.sleep(1)
+#        poweron()
+#        show() 
+
 
 
 #  commands
