@@ -54,9 +54,10 @@ def blink(sec):
     pin.on()
 
 
+
 global iter
 iter = 0
-
+timesleeping = 60
 
 #x = 5
 #while x != 0:
@@ -82,8 +83,8 @@ while True:
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('192.168.0.165', 8888))
-        oled.text('tcp', 90, 0)
-        oled.text('ok', 90, 8)
+        oled.text('tcp', 85, 0)
+        oled.text('ok', 85, 8)
         
     except OSError:
         print('not server connection')
@@ -92,10 +93,11 @@ while True:
         oled.text('TEMP:{}C'.format(str(t)), 0, 0)
         oled.text('HUM:{}%'.format(str(h)), 0, 10)
         oled.text('FAN:{}'.format(fan), 0, 20)
-        oled.text('no', 90, 0)
-        oled.text('conn..', 90, 8)
-        oled.text('#{}'.format(iter), 90, 20)
+        oled.text('not', 85, 0)
+        oled.text('conn..', 85, 8)
+        oled.text('#{}'.format(iter), 85, 20)
         show()
+        time.sleep(timesleeping)
     except KeyboardInterrupt:
         blank_lcd()
         break
@@ -117,8 +119,8 @@ while True:
         show()
 #        oled.fill(1)
 #            
-#      # polling time
-        time.sleep(30)
+      
+        time.sleep(timesleeping) # polling time
 #        blank_lcd()
 #        time.sleep(1)
 #        poweron()

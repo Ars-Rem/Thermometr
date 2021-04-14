@@ -33,3 +33,5 @@ def do_connect():
     print('network config:', wlan.ifconfig())
 
 do_connect()
+
+main()
